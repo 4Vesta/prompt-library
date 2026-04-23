@@ -22,7 +22,7 @@
       "url": "https://reddit.com/r/ClaudeAI",
       "type": "reddit",
       "description": "",
-      "notes": "Sort by top/week or top/month for the good stuff."
+      "notes": ""
     },
     {
       "id": "reddit-chatgptpromptgenius",
@@ -30,7 +30,7 @@
       "url": "https://reddit.com/r/ChatGPTPromptGenius",
       "type": "reddit",
       "description": "",
-      "notes": "Source of the u/PaxTheViking coursework tutor."
+      "notes": ""
     },
     {
       "id": "awesome-claude-prompts",
