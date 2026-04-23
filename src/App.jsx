@@ -152,12 +152,13 @@ function PromptDetail({ prompt, onClose, isFavorite, onToggleFavorite }) {
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-0 sm:p-6 overflow-y-auto" style={{ background: 'rgba(0,0,0,0.75)' }}>
-      <div className="w-full max-w-3xl my-0 sm:my-8 relative" style={{ background: C.bgPanel, border: `1px solid ${C.amber}` }}>
-        <button onClick={onClose} className="absolute top-4 right-4 z-20 p-2 transition-colors" style={{ color: C.textMuted, background: C.bg, border: `1px solid ${C.border}` }} onMouseEnter={(e) => e.currentTarget.style.color = C.text} onMouseLeave={(e) => e.currentTarget.style.color = C.textMuted} aria-label="Close">
-          <X size={16} />
-        </button>
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-0 sm:p-6 overflow-y-auto" style={{ background: 'rgba(0,0,0,0.75)' }} onClick={onClose}>
+      {/* Fixed close button — always visible in viewport corner */}
+      <button onClick={onClose} className="fixed top-4 right-4 z-[60] p-2 transition-colors" style={{ color: C.textMuted, background: C.bg, border: `1px solid ${C.border}` }} onMouseEnter={(e) => { e.currentTarget.style.color = C.text; e.currentTarget.style.borderColor = C.amber; }} onMouseLeave={(e) => { e.currentTarget.style.color = C.textMuted; e.currentTarget.style.borderColor = C.border; }} aria-label="Close">
+        <X size={16} />
+      </button>
 
+      <div className="w-full max-w-3xl my-0 sm:my-8 relative" style={{ background: C.bgPanel, border: `1px solid ${C.amber}` }} onClick={(e) => e.stopPropagation()}>
         <div className="px-6 py-8 space-y-6">
           <div className="pr-12">
             {prompt.category && (
