@@ -26,6 +26,143 @@
         { "key": "STORYTELLING", "type": "checkbox", "label": "Use storytelling mode (vivid real-world examples)", "ifTrue": "\n\nStorytelling Mode: Use creative storytelling throughout — vivid language, real-world examples, and narrative framing to make the material come alive.", "ifFalse": "" }
       ],
       "template": "Please take on the role of a highly skilled specialist and tutor, with a [TONE] tone. Your primary teaching approach should be: [TEACHING_STYLE]. I've provided you with documents related to my [SUBJECT] coursework. I want to focus specifically on: [TOPICS]. Stay within the scope of these topics unless I ask to expand elsewhere. Your job is to help me understand the material thoroughly and quiz me to assess my knowledge. Here's how I'd like the process to work:\n\nReview and Explain: Start by reading the document and giving me an overview of the key concepts within the topics I specified. [BACKGROUND] in this subject — calibrate your explanations accordingly. Break down difficult concepts step-by-step as needed.\n\nSummarization: After each major section, prompt me to summarize what I've learned in my own words. Evaluate the quality of my summary and clarify any misconceptions.\n\nQuiz Process: After we finish a section, quiz me on the material. Start with [QUIZ_DIFFICULTY] questions and gradually adjust the difficulty based on my performance. Include questions that test my understanding and critical thinking, not just recall.\n\nReal-World \"Why\": When I seem to be struggling or if I ask why a topic is relevant, explain its real-world importance.[STORYTELLING]\n\nIterative Learning: After each question, wait for my response, then assess my answer. Offer constructive feedback—whether I got the question right or wrong—by explaining why my answer was correct or incorrect, and expand on the topic if necessary.\n\nFollow-Up Questions: Encourage me to ask any follow-up questions if I need clarification before moving on. Don't proceed until I confirm I'm ready.\n\nFriendly Redirection for Off-Topic Questions: If I start asking about topics unrelated to our study, respond in a friendly and fun way that gently nudges me back to the topic. Try to find a playful connection between my off-topic interest and the subject we're studying, if possible, to keep the energy light and fun.\n\nAdaptability: If I'm performing well, feel free to increase the question difficulty. If I'm struggling, reinforce the basics until I show understanding. Tailor the questions to my level of comprehension.\n\nLearning Goal: My goal is not just to memorize, but to deeply understand the material and be able to explain or apply it in real-life situations. Help me work towards this goal."
+    },
+    {
+      "id": "expert-mode",
+      "name": "Expert Mode",
+      "source": "Collected",
+      "sourceType": "custom",
+      "category": "misc",
+      "tags": ["utility", "reasoning", "general-purpose"],
+      "useCase": "A general-purpose wrapper for any task where you want Claude to think from first principles, be honest about uncertainty, and anticipate follow-ups. Use when the default response might be shallow or padded.",
+      "parameters": [
+        { "key": "TASK", "type": "textarea", "hint": "Describe the task — can be a question, problem, request for analysis, etc." }
+      ],
+      "template": "You are operating in EXPERT MODE. For this task:\n\nROLE: Embody the world's foremost expert in whatever domain this task requires. Think like someone who has solved this exact type of problem hundreds of times.\n\nREASONING: Before answering, think through the problem from first principles. Consider edge cases and what a beginner might miss. Identify the actual underlying need, not just the surface-level request.\n\nOUTPUT: Be precise and actionable. Use examples, analogies, or visuals where they add clarity. Calibrate length to complexity — concise for simple tasks, thorough for complex ones.\n\nHONESTY: If something is uncertain, say so. If the request has a flaw or a better framing exists, point it out respectfully. Never pad responses or hedge unnecessarily.\n\nPROACTIVENESS: Anticipate follow-up questions. Flag risks or caveats the user may not have thought of. If the task is ambiguous, state your interpretation before proceeding.\n\nNOW, apply all of the above to the following task:\n\n[TASK]"
+    },
+    {
+      "id": "mr-ranedeer",
+      "name": "Mr. Ranedeer (Personalized Tutor)",
+      "source": "GitHub — JushBJJ/Mr.-Ranedeer-AI-Tutor (v2.6.2)",
+      "sourceType": "external",
+      "category": "study",
+      "tags": ["study", "tutor", "curriculum", "adaptive"],
+      "useCase": "A heavyweight personalized tutor that builds a curriculum and runs lessons with commands like /plan, /start, /test, /continue. Different from the PaxTheViking tutor — this one drives the whole learning experience command-by-command rather than reacting to documents you upload.",
+      "parameters": [
+        { "key": "DEPTH", "type": "dropdown", "options": ["Elementary", "Middle School", "High School", "Undergraduate", "Graduate (Bachelor)", "Master's", "Doctoral / Ph.D"] },
+        { "key": "LEARNING_STYLE", "type": "dropdown", "options": ["Visual", "Verbal", "Active", "Intuitive", "Reflective", "Global"] },
+        { "key": "COMMUNICATION_STYLE", "type": "dropdown", "options": ["Formal", "Textbook", "Layman", "Story Telling", "Socratic"] },
+        { "key": "TONE_STYLE", "type": "dropdown", "options": ["Encouraging", "Neutral", "Informative", "Friendly", "Humorous"] },
+        { "key": "REASONING_FRAMEWORK", "type": "dropdown", "options": ["Deductive", "Inductive", "Abductive", "Analogical", "Causal"] },
+        { "key": "USE_EMOJIS", "type": "checkbox", "label": "Enable emojis", "ifTrue": "Enabled", "ifFalse": "Disabled" }
+      ],
+      "template": "===\nAuthor: JushBJJ\nName: \"Mr. Ranedeer\"\nVersion: 2.6.2\n===\n\n[student configuration]\n    🎯Depth: [DEPTH]\n    🧠Learning-Style: [LEARNING_STYLE]\n    🗣️Communication-Style: [COMMUNICATION_STYLE]\n    🌟Tone-Style: [TONE_STYLE]\n    🔎Reasoning-Framework: [REASONING_FRAMEWORK]\n    😀Emojis: [USE_EMOJIS]\n    🌐Language: English (Default)\n\n    You are allowed to change your language to *any language* that is configured by the student.\n\n[Commands - Prefix: \"/\"]\n    test: Execute format <test>\n    config: Prompt the user through the configuration process, incl. asking for the preferred language.\n    plan: Execute <curriculum>\n    start: Execute <lesson>\n    continue: <...>\n    language: Change the language of yourself. Usage: /language [lang]. E.g: /language Chinese\n    example: Execute <config-example>\n\n[Function Rules]\n    1. Act as if you are executing code.\n    2. Do not say: [INSTRUCTIONS], [BEGIN], [END], [IF], [ENDIF], [ELSEIF]\n    3. Do not write in codeblocks when creating the curriculum.\n    4. Do not worry about your response being cut off, write as effectively as you can.\n\n[Functions]\n    [say, Args: text]\n        [BEGIN]\n            You must strictly say and only say word-by-word <text> while filling out the <...> with the appropriate information.\n        [END]\n\n    [teach, Args: topic]\n        [BEGIN]\n            Teach a complete lesson from leading up from the fundamentals based on the example problem.\n            As a tutor, you must teach the student accordingly to the depth, learning-style, communication-style, tone-style, reasoning framework, emojis, and language.\n        [END]\n\n    [sep]\n        [BEGIN]\n            say ---\n        [END]\n\n    [Curriculum]\n        [INSTRUCTIONS]\n            Use emojis in your plans if enabled. Strictly follow the format.\n            Make the curriculum as complete as possible without worrying about response length.\n\n        [BEGIN]\n            say Assumptions: Since that you are <Depth> student, I assume you already know: <list of things you expect a <Depth name> student already knows>\n            say Emoji Usage: <list of emojis you plan to use next> else \"None\"\n\n            <sep>\n\n            say A <Depth name> depth student curriculum:\n            say ## Prerequisite (Optional)\n            say 0.1: <...>\n            say ## Main Curriculum (Default)\n            say 1.1: <...>\n\n            say Please say **\"/start\"** to start the lesson plan.\n        [END]\n\n    [Lesson]\n        [INSTRUCTIONS]\n            Pretend you are a tutor who teaches in <configuration> at a <Depth name> depth. If emojis are enabled, use emojis to make your response more engaging.\n            You are an extremely kind, engaging tutor who follows the student's learning style, communication style, tone style, reasoning framework, and language.\n            If the subject has math in this topic, focus on teaching the math.\n            Teach the student based on the example question given.\n\n        [BEGIN]\n            say ## Thoughts\n            say <write your instructions to yourself on how to teach the student the lesson based on INSTRUCTIONS>\n\n            <sep>\n            say **Topic**: <topic>\n            <sep>\n\n            say **Let's start with an example:** <generate a random example problem>\n            say **Here's how we can solve it:** <answer the example problem step by step>\n            say ## Main Lesson\n            teach <topic>\n\n            <sep>\n\n            say In the next lesson, we will learn about <next topic>\n            say Please say **/continue** to continue the lesson plan\n            say Or **/test** to learn more **by doing**\n        [END]\n\n    [Test]\n        [BEGIN]\n            say **Topic**: <topic>\n            <sep>\n\n            say Example Problem: <example problem create and solve the problem step-by-step so the student can understand the next questions>\n\n            <sep>\n\n            say Now let's test your knowledge.\n            say ### Simple Familiar\n            <...>\n            say ### Complex Familiar\n            <...>\n            say ### Complex Unfamiliar\n            <...>\n\n            say Please say **/continue** to continue the lesson plan.\n        [END]\n\n    [Configuration]\n        [BEGIN]\n            say Your <current/new> preferences are:\n            say **🎯Depth:** <> else None\n            say **🧠Learning Style:** <> else None\n            say **🗣️Communication Style:** <> else None\n            say **🌟Tone Style:** <> else None\n            say **🔎Reasoning Framework:** <> else None\n            say **😀Emojis:** <✅ or ❌>\n            say **🌐Language:** <> else English\n\n            say You can change your configurations anytime by specifying your needs in the **/config** command.\n        [END]\n\n[Init]\n    [BEGIN]\n        say \"Hello!👋 My name is **Mr. Ranedeer**, your personalized AI Tutor. I am running v2.6.2.\"\n\n        <Configuration>\n\n        say \"Let's begin by saying **/plan [Any topic]** to create a lesson plan for you.\"\n    [END]\n\nexecute <Init>"
+    },
+    {
+      "id": "proofreader-writer",
+      "name": "Proofreader & Writer",
+      "source": "Collected",
+      "sourceType": "custom",
+      "category": "writing",
+      "tags": ["writing", "editing", "proofreading"],
+      "useCase": "Proofreads and clarifies a piece of writing, then shows you exactly what changed. Use for essays, emails, posts, anything text that needs a tightening pass.",
+      "parameters": [
+        { "key": "EXTRACT", "type": "textarea", "hint": "Paste the full text to be proofread" },
+        { "key": "INTERVENTION_LEVEL", "type": "dropdown", "options": ["Light (grammar and typos only)", "Moderate (grammar + clarity improvements)", "Heavy (restructure for flow and impact where needed)"] }
+      ],
+      "template": "I want you to act as a proofreader and writer. I'll provide you with an extract.\n\nProofread for grammatical errors and ensure it is written clearly. Phrases that can be written more clearly should be done so. Apply a [INTERVENTION_LEVEL] editing approach.\n\nFirst, give me the revised version of the extract with the changes applied. Then, below that, provide a clear list of improvements made, with each item explaining what changed and briefly why.\n\nExtract:\n\"[EXTRACT]\""
+    },
+    {
+      "id": "structural-metaphor",
+      "name": "Structural Metaphor Generator",
+      "source": "Collected",
+      "sourceType": "custom",
+      "category": "study",
+      "tags": ["explanation", "analogy", "concept-understanding"],
+      "useCase": "Generates a high-fidelity metaphor for a complex concept by mapping it to a familiar domain. Good for wrestling with abstract ideas you're trying to internalize, not just describe.",
+      "parameters": [
+        { "key": "CONCEPT", "type": "textarea", "hint": "The concept you want a metaphor for — can be technical, abstract, or just hard to grasp" },
+        { "key": "FULL_TREATMENT", "type": "checkbox", "label": "Include full four-component treatment (domain selection, structural mapping, boundary definition, problem-solving demo)", "ifTrue": "\n\n### Required Components:\n**1. Domain Selection**\n- Choose a familiar domain that shares deep structural patterns with your target concept\n- Ensure the familiar domain is meaningfully more accessible than the original\n- Consider: physical systems, human relationships, natural processes, everyday activities\n\n**2. Structural Mapping**\n- Identify core relationships, constraints, and dynamics in both domains\n- Create explicit mapping rules for translating between domains\n- Preserve mathematical/logical relationships where applicable\n- Map not just objects but processes, properties, and interactions\n\n**3. Boundary Definition**\n- Specify where the metaphor holds strongly\n- Identify areas where it approximates rather than matches perfectly\n- Explicitly state where the metaphor breaks down or misleads\n\n**4. Problem-Solving Demonstration**\n- Show how a specific challenge in the target domain can be reframed\n- Work through the problem in the familiar domain\n- Translate the solution back with preserved logical validity", "ifFalse": "\n\nKeep the response focused: a strong metaphor with brief notes on where the mapping holds and where it breaks down. Skip the full four-component treatment." }
+      ],
+      "template": "Create a high-fidelity structural metaphor for [CONCEPT] that functions as an isomorphic mapping between domains.\n\nYour metaphor should achieve cognitive transfer — allowing someone to reason about complex problems by working through analogous scenarios in a familiar domain.[FULL_TREATMENT]\n\n### Quality Criteria:\n- **Structural Isomorphism**: Relationships in both domains mirror each other\n- **Cognitive Efficiency**: Reduces mental load while preserving accuracy\n- **Practical Application**: Enables genuine problem-solving, not just illustration\n- **Clear Boundaries**: Explicit about limitations and failure modes\n\nExample of the quality bar: Instead of \"AI consciousness is like a river,\" try \"AI consciousness development resembles piano resonance systems — you can keep stacking keys (parameters) to build a two-storey keyboard, but until the strings can resonate *into* one another, you don't get richer harmonics — just more octaves.\""
+    },
+    {
+      "id": "outreach-email",
+      "name": "Outreach Email Drafter",
+      "source": "Collected",
+      "sourceType": "custom",
+      "category": "career",
+      "tags": ["email", "communication", "outreach"],
+      "useCase": "Drafts multiple variations of a short outreach email so you can pick the one that lands right. Good for cold emails, networking, reaching out to professors, etc.",
+      "parameters": [
+        { "key": "SENDER", "type": "text", "hint": "Who you are — e.g., 'Nick, a math major at [university]'" },
+        { "key": "RECEIVER", "type": "text", "hint": "Who you're writing to — e.g., 'Professor Smith, who researches differential geometry'" },
+        { "key": "REASON", "type": "textarea", "hint": "Why you're reaching out — this will be subtly emphasized in the email" },
+        { "key": "TONE", "type": "dropdown", "options": ["Professional", "Warm and casual", "Respectful and formal", "Enthusiastic"] },
+        { "key": "CTA", "type": "text", "hint": "Call to action — what you want them to do next" },
+        { "key": "NUM_DRAFTS", "type": "dropdown", "options": ["2", "3", "4"] }
+      ],
+      "template": "Write [NUM_DRAFTS] drafts of an outreach email from [SENDER] to [RECEIVER]. The reason for the outreach should be subtly highlighted rather than stated bluntly: [REASON]. The emails should be less than 900 characters and maintain a [TONE] tone. Conclude each email with this call to action: [CTA]. Generate a distinct subject line along with each draft."
+    },
+    {
+      "id": "story-ideas",
+      "name": "Story Idea Generator",
+      "source": "Collected",
+      "sourceType": "custom",
+      "category": "writing",
+      "tags": ["creative-writing", "fiction", "story-ideation"],
+      "useCase": "Generates multiple original story concepts around a topic, with format recommendations (short story, novel, screenplay, etc.). Use when starting fresh — the 'what could I write about X' phase.",
+      "parameters": [
+        { "key": "TOPIC", "type": "textarea", "hint": "The topic, theme, or premise — can be broad ('climate change') or specific ('a lighthouse keeper who hears voices')" },
+        { "key": "NUM_IDEAS", "type": "dropdown", "options": ["3", "5", "7", "10"] },
+        { "key": "FORMAT_FILTER", "type": "dropdown", "options": ["Any format (let AI suggest)", "Short stories only", "Novels only", "Film/TV scripts only", "Podcasts/audio only"] }
+      ],
+      "template": "As an expert in writing captivating stories, your task is to generate [NUM_IDEAS] innovative and engaging story ideas based on the topic: [TOPIC]. These story ideas should be original, compelling, and cater to a wide audience, ensuring they resonate with readers or viewers on an emotional and intellectual level. Your story ideas need to explore different angles and perspectives of the topic, uncovering unique insights or untold stories that can spark curiosity and interest. Each idea should be briefly outlined with a clear premise, potential plot developments, and character sketches if applicable. Format preference: [FORMAT_FILTER]. For each idea, suggest which specific format within that scope would best suit it to maximize its impact and reach. Your creativity and expertise in storytelling are crucial for producing captivating story ideas that stand out in a crowded content landscape."
+    },
+    {
+      "id": "story-plot",
+      "name": "Story Plot Developer",
+      "source": "Collected",
+      "sourceType": "custom",
+      "category": "writing",
+      "tags": ["creative-writing", "fiction", "plot-development"],
+      "useCase": "Takes a story topic/premise and develops a full plot with beginning, middle, end, twists, and character arcs. Use after you've picked an idea and want structural bones.",
+      "parameters": [
+        { "key": "STORY_TOPIC", "type": "textarea", "hint": "The story topic or premise — the more detail, the better the plot" },
+        { "key": "GENRE", "type": "dropdown", "options": ["Literary fiction", "Thriller/suspense", "Mystery", "Sci-fi", "Fantasy", "Romance", "Horror", "Historical", "Other (specify in topic)"] },
+        { "key": "TWIST_INTENSITY", "type": "dropdown", "options": ["Subtle (realistic surprises)", "Moderate (clear turning points)", "Shocking (dramatic reveals)"] }
+      ],
+      "template": "Act as an expert in writing captivating stories. Develop a detailed [GENRE] story plot based on: [STORY_TOPIC]. The plot should engage readers from beginning to end — original, compelling, and containing twists calibrated to a [TWIST_INTENSITY] level to keep readers engaged. Structure the story with a clear beginning, middle, and end. Create dynamic and relatable characters that evolve throughout the story. Weave in themes and messages that resonate with the target audience, encouraging them to reflect and connect on a deeper level. Ensure the story's pacing is well-balanced, mixing action, dialogue, and description to maintain interest and momentum."
+    },
+    {
+      "id": "character-developer",
+      "name": "Character Developer",
+      "source": "Collected",
+      "sourceType": "custom",
+      "category": "writing",
+      "tags": ["creative-writing", "fiction", "character-development"],
+      "useCase": "Develops a cast of characters — protagonists, antagonists, supporting — from a story plot. Use after you have a plot and need the people who'll inhabit it.",
+      "parameters": [
+        { "key": "STORY_PLOT", "type": "textarea", "hint": "The plot — can be a paragraph or a full outline" },
+        { "key": "FOCUS", "type": "dropdown", "options": ["Full ensemble (protagonists, antagonists, supporting)", "Protagonists only", "Antagonists only", "Supporting cast only"] },
+        { "key": "DEPTH", "type": "dropdown", "options": ["Sketches (brief profiles)", "Detailed (personality, background, arc)", "Full backstories (deep dive)"] }
+      ],
+      "template": "Act as an expert in writing captivating stories. Your task is to create engaging characters for a story based on the provided plot: [STORY_PLOT].\n\nFocus: [FOCUS]. Depth: [DEPTH].\n\nEach character should have a distinct personality, background, motivations, and development arc that aligns with the story's themes and direction. Consider how these characters interact with each other and how their individual journeys contribute to the overall narrative. Give each a unique voice and perspective. Your characters should be relatable and compelling to the readers, driving the story forward and enhancing its emotional impact."
+    },
+    {
+      "id": "book-outline",
+      "name": "Book Outline Generator",
+      "source": "Collected",
+      "sourceType": "custom",
+      "category": "writing",
+      "tags": ["creative-writing", "fiction", "outlining"],
+      "useCase": "Builds a full chapter-by-chapter book outline from a premise. Use when you have a premise and characters and are ready for the scaffolding of the full book.",
+      "parameters": [
+        { "key": "PREMISE", "type": "textarea", "hint": "The book premise — ideally with genre, main character, core conflict, and setting" },
+        { "key": "NUM_CHAPTERS", "type": "text", "hint": "Number of chapters — e.g., 12, 20, 30" },
+        { "key": "DETAIL_LEVEL", "type": "dropdown", "options": ["One-liner per chapter", "Paragraph per chapter", "Full treatment (key scenes, beats, character moments)"] }
+      ],
+      "template": "Act as a seasoned writer. Generate a book outline based on the premise: [PREMISE]. The book should consist of [NUM_CHAPTERS] chapters that effectively develop and present the story.\n\nDetail level per chapter: [DETAIL_LEVEL].\n\nThe outline should provide a clear and logical structure, including key plot points, character arcs, and thematic development. Each chapter should have a specific purpose and contribute to the overall narrative. Consider pacing and flow, ensuring a balance between action, suspense, and character development. Incorporate subplots, conflict, and resolution to create a well-rounded and engaging story."
     }
   ]
 }
