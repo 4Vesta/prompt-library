@@ -4,12 +4,7 @@ Personal prompt organizer. Built with Vite + React + Tailwind, deployed as a sta
 
 ## Philosophy
 
-This isn't a prompt hoarder. It's a tool for generating detailed, tailored prompts instead of generic copy-paste. Every prompt in the library should earn its parameters — the goal is fewer, better prompts that produce better output, not a massive collection of generic templates.
-
-Guiding principles:
-- Quality over quantity. A library of 15 well-parameterized prompts beats 100 generic ones.
-- Parameters should reflect real decisions that meaningfully change the output. If a value never varies in practice, bake it into the template instead.
-- When adding a prompt, think about the specific situations it'll be used in. The variation between those situations is where the parameters come from.
+Tool for generating detailed, tailored prompts using a collection of templates. Most prompts in the library have their own adjustable parameters simplifying the adjustment process.
 
 ## How to add prompts
 
