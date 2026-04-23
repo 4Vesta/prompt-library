@@ -65,6 +65,22 @@
       "notes": "More business-leaning but has education sections."
     },
     {
+      "id": "prompts-chat",
+      "name": "prompts.chat",
+      "url": "https://prompts.chat/prompts",
+      "type": "library",
+      "description": "Community-submitted prompt directory, 1600+ prompts, CC0 licensed.",
+      "notes": "High volume, variable quality. Has Students / Teaching / Tutoring / Claude tags worth filtering by. Expect to dig — signal-to-noise is mixed."
+    },
+    {
+      "id": "promptadvance-claude",
+      "name": "Prompt Advance — Claude Prompts",
+      "url": "https://promptadvance.club/claude-prompts",
+      "type": "library",
+      "description": "700+ Claude-specific prompts organized by topic.",
+      "notes": "Business/marketing/SEO-heavy, generic \"Act as expert\" style. Has a Learning section with Students content but overall skews low-signal. Lower priority than AI for Education or the awesome-claude-prompts GitHub repo."
+    },
+    {
       "id": "god-of-prompt",
       "name": "God of Prompt",
       "url": "https://www.godofprompt.ai/",
