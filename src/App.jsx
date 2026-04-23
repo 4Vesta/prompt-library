@@ -152,14 +152,23 @@ function PromptDetail({ prompt, onClose, isFavorite, onToggleFavorite }) {
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-0 sm:p-6 overflow-y-auto" style={{ background: 'rgba(0,0,0,0.75)' }} onClick={onClose}>
-      {/* Fixed close button — always visible in viewport corner */}
-      <button onClick={onClose} className="fixed top-4 right-4 z-[60] p-2 transition-colors" style={{ color: C.textMuted, background: C.bg, border: `1px solid ${C.border}` }} onMouseEnter={(e) => { e.currentTarget.style.color = C.text; e.currentTarget.style.borderColor = C.amber; }} onMouseLeave={(e) => { e.currentTarget.style.color = C.textMuted; e.currentTarget.style.borderColor = C.border; }} aria-label="Close">
-        <X size={16} />
-      </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8" style={{ background: 'rgba(0,0,0,0.75)' }} onClick={onClose}>
+      <div
+        className="w-full max-w-3xl relative flex flex-col"
+        style={{
+          background: C.bgPanel,
+          border: `1px solid ${C.amber}`,
+          maxHeight: 'calc(100vh - 2rem)',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close button — positioned on the fixed frame, not the scrolling content */}
+        <button onClick={onClose} className="absolute top-3 right-3 z-20 p-2 transition-colors" style={{ color: C.textMuted, background: C.bg, border: `1px solid ${C.border}` }} onMouseEnter={(e) => { e.currentTarget.style.color = C.text; e.currentTarget.style.borderColor = C.amber; }} onMouseLeave={(e) => { e.currentTarget.style.color = C.textMuted; e.currentTarget.style.borderColor = C.border; }} aria-label="Close">
+          <X size={16} />
+        </button>
 
-      <div className="w-full max-w-3xl my-0 sm:my-8 relative" style={{ background: C.bgPanel, border: `1px solid ${C.amber}` }} onClick={(e) => e.stopPropagation()}>
-        <div className="px-6 py-8 space-y-6">
+        {/* Scrollable inner content */}
+        <div className="overflow-y-auto px-6 py-8 space-y-6" style={{ flex: 1 }}>
           <div className="pr-12">
             {prompt.category && (
               <p className="font-mono text-[10px] uppercase tracking-[0.15em] mb-2" style={{ color: C.amber }}>
@@ -198,7 +207,7 @@ function PromptDetail({ prompt, onClose, isFavorite, onToggleFavorite }) {
                 {copied ? <Check size={12} /> : <Copy size={12} />}{copied ? 'Copied' : 'Copy'}
               </button>
             </div>
-            <div className="p-4 font-mono text-xs whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto" style={{ background: C.bg, border: `1px solid ${C.border}`, color: C.textDim }}>{filledPrompt}</div>
+            <div className="p-4 font-mono text-xs whitespace-pre-wrap leading-relaxed" style={{ background: C.bg, border: `1px solid ${C.border}`, color: C.textDim }}>{filledPrompt}</div>
           </div>
         </div>
       </div>
