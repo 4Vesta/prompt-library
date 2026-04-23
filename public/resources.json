@@ -1,0 +1,76 @@
+{
+  "resources": [
+    {
+      "id": "ai-for-education",
+      "name": "AI for Education — Student Library",
+      "url": "https://www.aiforeducation.io/prompt-library-for-students",
+      "type": "library",
+      "description": "Prompts specifically designed for students. Works across Claude, ChatGPT, Gemini, Perplexity.",
+      "notes": "Probably the closest fit for academic use. Check here first."
+    },
+    {
+      "id": "northeastern-claude",
+      "name": "Northeastern — Claude Learning Mode Guide",
+      "url": "https://learning.northeastern.edu/ai-student-guides-using-claude-learning-mode-to-study/",
+      "type": "reference",
+      "description": "University-produced guide on using Claude for studying with Calculus-specific examples.",
+      "notes": "More about how to use Claude than a prompt dump, but the framing is solid."
+    },
+    {
+      "id": "reddit-claudeai",
+      "name": "r/ClaudeAI",
+      "url": "https://reddit.com/r/ClaudeAI",
+      "type": "reddit",
+      "description": "",
+      "notes": "Sort by top/week or top/month for the good stuff."
+    },
+    {
+      "id": "reddit-chatgptpromptgenius",
+      "name": "r/ChatGPTPromptGenius",
+      "url": "https://reddit.com/r/ChatGPTPromptGenius",
+      "type": "reddit",
+      "description": "",
+      "notes": "Source of the u/PaxTheViking coursework tutor."
+    },
+    {
+      "id": "awesome-claude-prompts",
+      "name": "langgptai/awesome-claude-prompts",
+      "url": "https://github.com/langgptai/awesome-claude-prompts",
+      "type": "library",
+      "description": "Community-curated Claude prompts.",
+      "notes": "Includes the \"Mr. Ranedeer\" AI tutor prompt."
+    },
+    {
+      "id": "anthropic-prompting-overview",
+      "name": "Anthropic — Prompt Engineering Overview",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview",
+      "type": "reference",
+      "description": "Entry point to Anthropic's official prompt engineering docs.",
+      "notes": "Start here for the big picture before diving into specific techniques."
+    },
+    {
+      "id": "anthropic-prompting-docs",
+      "name": "Anthropic — Prompting Best Practices",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+      "type": "reference",
+      "description": "Official Claude prompting guide.",
+      "notes": "Read this before going deep on prompt collecting — it'll improve your own prompt-writing more than any library."
+    },
+    {
+      "id": "field-guide-ai",
+      "name": "Field Guide to AI — Prompt Library",
+      "url": "https://fieldguidetoai.com/resources/ai-prompt-library",
+      "type": "library",
+      "description": "200+ prompts across 9 categories. CC-BY licensed.",
+      "notes": "More business-leaning but has education sections."
+    },
+    {
+      "id": "god-of-prompt",
+      "name": "God of Prompt",
+      "url": "https://www.godofprompt.ai/",
+      "type": "skip",
+      "description": "",
+      "notes": "Heavy on business/marketing/SEO, paid bundles. Skip."
+    }
+  ]
+}
