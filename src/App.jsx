@@ -23,7 +23,6 @@ function Badge({ children, className = '' }) {
 }
 
 function PromptCard({ prompt, onOpen, isFavorite, onToggleFavorite }) {
-  const sourceStyle = SOURCE_STYLES[prompt.sourceType] || SOURCE_STYLES.custom;
   return (
     <div className="group relative border border-stone-300 bg-stone-50 hover:bg-white hover:border-stone-900 transition-all duration-200">
       <button onClick={(e) => { e.stopPropagation(); onToggleFavorite(prompt.id); }}
@@ -32,7 +31,9 @@ function PromptCard({ prompt, onOpen, isFavorite, onToggleFavorite }) {
         <Star size={16} fill={isFavorite ? 'currentColor' : 'none'} />
       </button>
       <button onClick={() => onOpen(prompt)} className="w-full text-left p-5 pr-10">
-        <div className="flex items-start gap-3 mb-3"><Badge className={sourceStyle}>{SOURCE_LABELS[prompt.sourceType] || prompt.sourceType}</Badge></div>
+        {prompt.category && (
+          <p className="text-[10px] font-mono uppercase tracking-[0.15em] text-stone-500 mb-2">{prompt.category}</p>
+        )}
         <h3 className="font-serif text-lg text-stone-900 leading-tight mb-2">{prompt.name}</h3>
         <p className="text-sm text-stone-600 leading-relaxed mb-4 font-serif">{prompt.useCase}</p>
         <div className="flex items-center justify-between">
