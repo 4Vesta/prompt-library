@@ -3,81 +3,82 @@ import { Search, Copy, Check, BookOpen, X, Sparkles, Star, ExternalLink, Library
 
 const RESOURCE_TYPE_LABELS = { library: 'Library', reddit: 'Reddit', reference: 'Reference', skip: 'Skip' };
 
-// Terminal color palette
+// Swiss Modern palette — restrained, disciplined, confident
 const C = {
-  bg: '#0D1117',
-  bgPanel: '#161B22',
-  bgElevated: '#21262D',
-  border: '#30363D',
-  borderHover: '#58606B',
-  text: '#F0F6FC',
-  textDim: '#C9D1D9',
-  textMuted: '#8B949E',
-  amber: '#F5A524',
-  green: '#3FB950',
-  blue: '#58A6FF',
-  red: '#F85149',
-  violet: '#A78BFA',
-};
-
-const RESOURCE_TYPE_COLORS = {
-  library: C.blue,
-  reddit: C.amber,
-  reference: C.violet,
-  skip: C.textMuted,
+  bg: '#FAFAF9',           // off-white paper
+  bgPanel: '#FFFFFF',      // pure white for cards
+  bgMuted: '#F5F5F4',      // subtle differentiation
+  ink: '#0A0A0A',          // near-black, not pure
+  inkDim: '#404040',       // body text
+  inkMuted: '#737373',     // secondary
+  inkFaint: '#A3A3A3',     // tertiary
+  border: '#0A0A0A',       // black borders are part of the grid
+  borderSoft: '#E5E5E5',   // subtle dividers
+  accent: '#B91C1C',       // oxblood — deliberate, serious
+  accentLight: '#FEE2E2',
 };
 
 const FAVORITES_KEY = 'prompt-library-favorites-v1';
 
-function PromptCard({ prompt, onOpen, isFavorite, onToggleFavorite }) {
+// Category number formatter: gives "01", "02", etc. based on position
+function getCategoryNumber(categoryId, categories) {
+  const idx = categories.findIndex(c => c.id === categoryId);
+  return idx >= 0 ? String(idx + 1).padStart(2, '0') : '--';
+}
+
+function PromptCard({ prompt, onOpen, isFavorite, onToggleFavorite, categoryNumber, categoryLabel }) {
   return (
-    <div className="group relative transition-all duration-200" style={{ background: C.bgPanel, border: `1px solid ${C.border}` }} onMouseEnter={(e) => e.currentTarget.style.borderColor = C.amber} onMouseLeave={(e) => e.currentTarget.style.borderColor = C.border}>
+    <div className="group relative transition-all duration-150"
+      style={{ background: C.bgPanel, border: `1px solid ${C.borderSoft}`, borderLeft: `4px solid ${C.ink}` }}
+      onMouseEnter={(e) => { e.currentTarget.style.borderLeftColor = C.accent; e.currentTarget.style.borderColor = C.borderSoft; e.currentTarget.style.borderLeftWidth = '4px'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderLeftColor = C.ink; }}
+    >
       <button onClick={(e) => { e.stopPropagation(); onToggleFavorite(prompt.id); }}
-        className="absolute top-3 right-3 z-10 p-1 transition-colors"
-        style={{ color: isFavorite ? C.amber : C.textMuted }}
+        className="absolute top-4 right-4 z-10 p-1 transition-colors"
+        style={{ color: isFavorite ? C.accent : C.inkFaint }}
         aria-label={isFavorite ? 'Unfavorite' : 'Favorite'}>
         <Star size={16} fill={isFavorite ? 'currentColor' : 'none'} />
       </button>
-      <button onClick={() => onOpen(prompt)} className="w-full text-left p-5 pr-10">
+      <button onClick={() => onOpen(prompt)} className="w-full text-left p-6 pr-12">
         {prompt.category && (
-          <p className="font-mono text-[10px] uppercase tracking-[0.15em] mb-2" style={{ color: C.amber }}>
-            &gt; {prompt.category}
+          <p className="font-sans text-[10px] uppercase tracking-[0.2em] mb-3" style={{ color: C.ink, fontWeight: 600 }}>
+            {categoryNumber} / {categoryLabel}
           </p>
         )}
-        <h3 className="font-mono text-base leading-tight mb-2" style={{ color: C.text, fontWeight: 500 }}>{prompt.name}</h3>
-        <p className="text-sm leading-relaxed mb-4" style={{ color: C.textMuted, fontFamily: 'system-ui, sans-serif' }}>{prompt.useCase}</p>
+        <h3 className="font-sans leading-[1.15] mb-3" style={{ color: C.ink, fontSize: '1.375rem', fontWeight: 700, letterSpacing: '-0.02em' }}>{prompt.name}</h3>
+        <p className="font-sans text-sm leading-relaxed mb-4" style={{ color: C.inkDim }}>{prompt.useCase}</p>
         <div className="flex items-center justify-between">
-          <div className="flex flex-wrap gap-x-2 gap-y-1">
+          <div className="flex flex-wrap gap-x-3 gap-y-1">
             {(prompt.tags || []).slice(0, 4).map(tag => (
-              <span key={tag} className="font-mono text-[10px]" style={{ color: C.green }}>#{tag}</span>
+              <span key={tag} className="font-mono text-[10px] uppercase tracking-wider" style={{ color: C.inkMuted }}>{tag}</span>
             ))}
           </div>
-          <span className="font-mono text-[10px] uppercase tracking-wider transition-colors" style={{ color: C.textMuted }}>Open →</span>
+          <span className="font-sans text-[10px] uppercase tracking-[0.15em] transition-colors" style={{ color: C.inkFaint, fontWeight: 600 }}>Open →</span>
         </div>
       </button>
     </div>
   );
 }
 
-function ResourceCard({ resource }) {
-  const accent = RESOURCE_TYPE_COLORS[resource.type] || C.blue;
+function ResourceCard({ resource, index }) {
   const isSkip = resource.type === 'skip';
+  const number = String(index + 1).padStart(2, '0');
   return (
     <a href={resource.url} target="_blank" rel="noopener noreferrer"
-       className="group relative block p-5 transition-all duration-200"
-       style={{ background: C.bgPanel, border: `1px solid ${C.border}`, opacity: isSkip ? 0.5 : 1 }}
-       onMouseEnter={(e) => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.opacity = 1; }}
-       onMouseLeave={(e) => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.opacity = isSkip ? 0.5 : 1; }}>
+       className="group relative block p-6 transition-all duration-150"
+       style={{ background: C.bgPanel, border: `1px solid ${C.borderSoft}`, borderLeft: `4px solid ${isSkip ? C.inkFaint : C.ink}`, opacity: isSkip ? 0.55 : 1 }}
+       onMouseEnter={(e) => { if (!isSkip) e.currentTarget.style.borderLeftColor = C.accent; e.currentTarget.style.opacity = 1; }}
+       onMouseLeave={(e) => { if (!isSkip) e.currentTarget.style.borderLeftColor = C.ink; e.currentTarget.style.opacity = isSkip ? 0.55 : 1; }}>
       <div className="flex items-start justify-between gap-3 mb-3">
-        <span className="font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: accent }}>
-          &gt; {RESOURCE_TYPE_LABELS[resource.type] || resource.type}
-        </span>
-        <ExternalLink size={14} style={{ color: C.textMuted }} />
+        <p className="font-sans text-[10px] uppercase tracking-[0.2em]" style={{ color: C.ink, fontWeight: 600 }}>
+          {number} / {RESOURCE_TYPE_LABELS[resource.type] || resource.type}
+        </p>
+        <ExternalLink size={14} style={{ color: C.inkFaint }} />
       </div>
-      <h3 className="font-mono text-base leading-tight mb-2" style={{ color: C.text, fontWeight: 500 }}>{resource.name}</h3>
-      {resource.description && <p className="text-sm leading-relaxed mb-3" style={{ color: C.textMuted, fontFamily: 'system-ui, sans-serif' }}>{resource.description}</p>}
-      {resource.notes && <p className="text-xs italic pl-3 mb-3" style={{ color: C.textMuted, borderLeft: `2px solid ${C.border}`, fontFamily: 'system-ui, sans-serif' }}>{resource.notes}</p>}
-      <p className="font-mono text-[10px] mt-3 truncate" style={{ color: C.textMuted }}>{resource.url.replace(/^https?:\/\//, '')}</p>
+      <h3 className="font-sans leading-[1.15] mb-2" style={{ color: C.ink, fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>{resource.name}</h3>
+      {resource.description && <p className="font-sans text-sm leading-relaxed mb-3" style={{ color: C.inkDim }}>{resource.description}</p>}
+      {resource.notes && <p className="font-sans text-sm italic pl-3 mb-3" style={{ color: C.inkMuted, borderLeft: `2px solid ${C.borderSoft}` }}>{resource.notes}</p>}
+      <p className="font-mono text-[10px] mt-3 truncate" style={{ color: C.inkFaint }}>{resource.url.replace(/^https?:\/\//, '')}</p>
     </a>
   );
 }
@@ -85,39 +86,43 @@ function ResourceCard({ resource }) {
 function ParameterInput({ param, value, onChange }) {
   const inputStyle = {
     width: '100%',
-    padding: '8px 12px',
-    background: C.bg,
-    border: `1px solid ${C.border}`,
-    color: C.text,
-    fontFamily: 'ui-monospace, monospace',
+    padding: '10px 14px',
+    background: C.bgPanel,
+    border: `1px solid ${C.ink}`,
+    color: C.ink,
+    fontFamily: 'Inter, system-ui, sans-serif',
     fontSize: '14px',
     outline: 'none',
+    borderRadius: 0,
   };
   const label = (
-    <label className="block font-mono text-xs mb-2" style={{ color: C.textDim }}>
-      <span style={{ color: C.amber }}>[{param.key}]</span>
-      {param.hint && <span className="ml-2 normal-case" style={{ color: C.textMuted }}>— {param.hint}</span>}
+    <label className="block mb-2" style={{ fontSize: '11px' }}>
+      <span className="font-mono uppercase tracking-wider" style={{ color: C.ink, fontWeight: 600 }}>[{param.key}]</span>
+      {param.hint && <span className="font-sans ml-3" style={{ color: C.inkMuted }}>{param.hint}</span>}
     </label>
   );
   if (param.type === 'textarea') return (
-    <div>{label}<textarea value={value || ''} onChange={(e) => onChange(e.target.value)} rows={3} style={{ ...inputStyle, resize: 'vertical' }} onFocus={(e) => e.target.style.borderColor = C.amber} onBlur={(e) => e.target.style.borderColor = C.border} /></div>
+    <div>{label}<textarea value={value || ''} onChange={(e) => onChange(e.target.value)} rows={3} style={{ ...inputStyle, resize: 'vertical' }} onFocus={(e) => e.target.style.borderColor = C.accent} onBlur={(e) => e.target.style.borderColor = C.ink} /></div>
   );
   if (param.type === 'dropdown') return (
     <div>{label}
-      <select value={value || ''} onChange={(e) => onChange(e.target.value)} style={inputStyle} onFocus={(e) => e.target.style.borderColor = C.amber} onBlur={(e) => e.target.style.borderColor = C.border}>
+      <select value={value || ''} onChange={(e) => onChange(e.target.value)} style={inputStyle} onFocus={(e) => e.target.style.borderColor = C.accent} onBlur={(e) => e.target.style.borderColor = C.ink}>
         <option value="">Select...</option>
         {(param.options || []).map(opt => <option key={opt} value={opt}>{opt}</option>)}
       </select>
     </div>
   );
   if (param.type === 'checkbox') return (
-    <div><label className="flex items-center gap-2 cursor-pointer">
-      <input type="checkbox" checked={value === true} onChange={(e) => onChange(e.target.checked)} style={{ width: 16, height: 16, accentColor: C.amber }} />
-      <span className="font-mono text-sm" style={{ color: C.textDim }}><span style={{ color: C.amber }}>[{param.key}]</span>{param.label && <span className="ml-2 normal-case" style={{ color: C.textMuted, fontFamily: 'system-ui, sans-serif' }}>— {param.label}</span>}</span>
+    <div><label className="flex items-center gap-3 cursor-pointer">
+      <input type="checkbox" checked={value === true} onChange={(e) => onChange(e.target.checked)} style={{ width: 18, height: 18, accentColor: C.accent }} />
+      <span style={{ fontSize: '13px' }}>
+        <span className="font-mono uppercase tracking-wider" style={{ color: C.ink, fontWeight: 600 }}>[{param.key}]</span>
+        {param.label && <span className="font-sans ml-2" style={{ color: C.inkDim }}>{param.label}</span>}
+      </span>
     </label></div>
   );
   return (
-    <div>{label}<input type="text" value={value || ''} onChange={(e) => onChange(e.target.value)} style={inputStyle} onFocus={(e) => e.target.style.borderColor = C.amber} onBlur={(e) => e.target.style.borderColor = C.border} /></div>
+    <div>{label}<input type="text" value={value || ''} onChange={(e) => onChange(e.target.value)} style={inputStyle} onFocus={(e) => e.target.style.borderColor = C.accent} onBlur={(e) => e.target.style.borderColor = C.ink} /></div>
   );
 }
 
@@ -132,7 +137,7 @@ function fillTemplate(template, parameters, values) {
   return result;
 }
 
-function PromptDetail({ prompt, onClose, isFavorite, onToggleFavorite }) {
+function PromptDetail({ prompt, onClose, isFavorite, onToggleFavorite, categoryNumber, categoryLabel }) {
   const [paramValues, setParamValues] = useState(() => {
     const init = {};
     (prompt.parameters || []).forEach(p => { init[p.key] = p.type === 'checkbox' ? false : ''; });
@@ -152,62 +157,60 @@ function PromptDetail({ prompt, onClose, isFavorite, onToggleFavorite }) {
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8" style={{ background: 'rgba(0,0,0,0.75)' }} onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8" style={{ background: 'rgba(10,10,10,0.55)' }} onClick={onClose}>
       <div
         className="w-full max-w-3xl relative flex flex-col"
         style={{
           background: C.bgPanel,
-          border: `1px solid ${C.amber}`,
+          border: `2px solid ${C.ink}`,
           maxHeight: 'calc(100vh - 2rem)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close button — positioned on the fixed frame, not the scrolling content */}
-        <button onClick={onClose} className="absolute top-3 right-3 z-20 p-2 transition-colors" style={{ color: C.textMuted, background: C.bg, border: `1px solid ${C.border}` }} onMouseEnter={(e) => { e.currentTarget.style.color = C.text; e.currentTarget.style.borderColor = C.amber; }} onMouseLeave={(e) => { e.currentTarget.style.color = C.textMuted; e.currentTarget.style.borderColor = C.border; }} aria-label="Close">
+        <button onClick={onClose} className="absolute top-3 right-3 z-20 p-2 transition-colors" style={{ color: C.ink, background: C.bgPanel, border: `1px solid ${C.ink}` }} onMouseEnter={(e) => { e.currentTarget.style.background = C.ink; e.currentTarget.style.color = C.bgPanel; }} onMouseLeave={(e) => { e.currentTarget.style.background = C.bgPanel; e.currentTarget.style.color = C.ink; }} aria-label="Close">
           <X size={16} />
         </button>
 
-        {/* Scrollable inner content */}
-        <div className="overflow-y-auto px-6 py-8 space-y-6" style={{ flex: 1 }}>
+        <div className="overflow-y-auto px-8 py-8 space-y-8" style={{ flex: 1 }}>
           <div className="pr-12">
             {prompt.category && (
-              <p className="font-mono text-[10px] uppercase tracking-[0.15em] mb-2" style={{ color: C.amber }}>
-                &gt; {prompt.category}
+              <p className="font-sans text-[10px] uppercase tracking-[0.2em] mb-3" style={{ color: C.ink, fontWeight: 600 }}>
+                {categoryNumber} / {categoryLabel}
               </p>
             )}
-            <div className="flex items-start gap-3 mb-2">
-              <h2 className="font-mono text-2xl leading-tight flex-1" style={{ color: C.text, fontWeight: 500 }}>{prompt.name}</h2>
-              <button onClick={() => onToggleFavorite(prompt.id)} className="p-1 transition-colors mt-1" style={{ color: isFavorite ? C.amber : C.textMuted }}>
-                <Star size={16} fill={isFavorite ? 'currentColor' : 'none'} />
+            <div className="flex items-start gap-3 mb-3">
+              <h2 className="font-sans leading-[1.1] flex-1" style={{ color: C.ink, fontSize: '2rem', fontWeight: 700, letterSpacing: '-0.025em' }}>{prompt.name}</h2>
+              <button onClick={() => onToggleFavorite(prompt.id)} className="p-1 transition-colors mt-2" style={{ color: isFavorite ? C.accent : C.inkFaint }}>
+                <Star size={18} fill={isFavorite ? 'currentColor' : 'none'} />
               </button>
             </div>
-            <p className="font-mono text-xs" style={{ color: C.textMuted }}>source: {prompt.source}</p>
+            <p className="font-mono text-xs" style={{ color: C.inkMuted }}>Source — {prompt.source}</p>
           </div>
 
-          <div style={{ borderTop: `1px solid ${C.border}` }} />
+          <div style={{ borderTop: `1px solid ${C.ink}` }} />
 
           <div>
-            <h4 className="font-mono text-[10px] uppercase tracking-widest mb-2" style={{ color: C.textMuted }}>// Use case</h4>
-            <p className="leading-relaxed" style={{ color: C.textDim, fontFamily: 'system-ui, sans-serif' }}>{prompt.useCase}</p>
+            <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] mb-3" style={{ color: C.ink, fontWeight: 600 }}>Use Case</h4>
+            <p className="font-sans leading-relaxed" style={{ color: C.inkDim, fontSize: '15px' }}>{prompt.useCase}</p>
           </div>
 
           {hasParams && (
             <div>
-              <h4 className="font-mono text-[10px] uppercase tracking-widest mb-3" style={{ color: C.textMuted }}>// Fill in parameters</h4>
-              <div className="space-y-4">
+              <h4 className="font-sans text-[10px] uppercase tracking-[0.2em] mb-4" style={{ color: C.ink, fontWeight: 600 }}>Parameters</h4>
+              <div className="space-y-5">
                 {prompt.parameters.map(p => <ParameterInput key={p.key} param={p} value={paramValues[p.key]} onChange={(v) => setParamValues({ ...paramValues, [p.key]: v })} />)}
               </div>
             </div>
           )}
 
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <h4 className="font-mono text-[10px] uppercase tracking-widest" style={{ color: C.textMuted }}>// {hasParams ? 'Filled prompt' : 'Prompt'}</h4>
-              <button onClick={handleCopy} className="flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider px-3 py-1.5 transition-all" style={{ background: C.amber, color: C.bg, fontWeight: 500 }} onMouseEnter={(e) => e.currentTarget.style.background = '#FFB84D'} onMouseLeave={(e) => e.currentTarget.style.background = C.amber}>
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-sans text-[10px] uppercase tracking-[0.2em]" style={{ color: C.ink, fontWeight: 600 }}>{hasParams ? 'Filled Prompt' : 'Prompt'}</h4>
+              <button onClick={handleCopy} className="flex items-center gap-2 font-sans text-xs uppercase tracking-[0.15em] px-4 py-2 transition-all" style={{ background: C.ink, color: C.bgPanel, fontWeight: 600, border: `1px solid ${C.ink}` }} onMouseEnter={(e) => { e.currentTarget.style.background = C.accent; e.currentTarget.style.borderColor = C.accent; }} onMouseLeave={(e) => { e.currentTarget.style.background = C.ink; e.currentTarget.style.borderColor = C.ink; }}>
                 {copied ? <Check size={12} /> : <Copy size={12} />}{copied ? 'Copied' : 'Copy'}
               </button>
             </div>
-            <div className="p-4 font-mono text-xs whitespace-pre-wrap leading-relaxed" style={{ background: C.bg, border: `1px solid ${C.border}`, color: C.textDim }}>{filledPrompt}</div>
+            <div className="p-5 font-mono text-xs whitespace-pre-wrap leading-relaxed" style={{ background: C.bgMuted, border: `1px solid ${C.borderSoft}`, color: C.inkDim }}>{filledPrompt}</div>
           </div>
         </div>
       </div>
@@ -218,16 +221,17 @@ function PromptDetail({ prompt, onClose, isFavorite, onToggleFavorite }) {
 function FilterButton({ active, onClick, children, disabled }) {
   return (
     <button onClick={onClick} disabled={disabled}
-      className="font-mono text-[10px] uppercase tracking-wider px-3 py-1.5 transition-colors"
+      className="font-sans text-[11px] uppercase tracking-[0.15em] px-4 py-2 transition-colors"
       style={{
-        background: active ? C.amber : 'transparent',
-        color: active ? C.bg : (disabled ? C.textMuted : C.textDim),
-        border: `1px solid ${active ? C.amber : C.border}`,
-        opacity: disabled ? 0.4 : 1,
+        background: active ? C.ink : C.bgPanel,
+        color: active ? C.bgPanel : (disabled ? C.inkFaint : C.ink),
+        border: `1px solid ${active ? C.ink : (disabled ? C.borderSoft : C.ink)}`,
+        fontWeight: 600,
+        opacity: disabled ? 0.5 : 1,
         cursor: disabled ? 'not-allowed' : 'pointer',
       }}
-      onMouseEnter={(e) => { if (!active && !disabled) e.currentTarget.style.borderColor = C.amber; }}
-      onMouseLeave={(e) => { if (!active && !disabled) e.currentTarget.style.borderColor = C.border; }}>
+      onMouseEnter={(e) => { if (!active && !disabled) { e.currentTarget.style.background = C.ink; e.currentTarget.style.color = C.bgPanel; } }}
+      onMouseLeave={(e) => { if (!active && !disabled) { e.currentTarget.style.background = C.bgPanel; e.currentTarget.style.color = C.ink; } }}>
       {children}
     </button>
   );
@@ -252,48 +256,58 @@ function PromptsTab({ data, favorites, onToggleFavorite, onOpenPrompt }) {
     return counts;
   }, [data]);
 
+  const categoryLookup = useMemo(() => {
+    const m = {};
+    (data.categories || []).forEach((c, i) => { m[c.id] = { number: String(i + 1).padStart(2, '0'), label: c.label }; });
+    return m;
+  }, [data.categories]);
+
   return (
     <>
-      <section className="sticky z-10" style={{ top: '129px', background: C.bg, borderBottom: `1px solid ${C.border}` }}>
-        <div className="max-w-5xl mx-auto px-6 py-4 space-y-3">
+      <section className="sticky z-10" style={{ top: '112px', background: C.bg, borderBottom: `1px solid ${C.ink}` }}>
+        <div className="max-w-5xl mx-auto px-6 py-5 space-y-4">
           <div className="relative">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.textMuted }} />
-            <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="// Search prompts by name, tag, or use case..."
-              className="w-full pl-10 pr-4 py-2.5 font-mono text-sm transition-colors outline-none"
-              style={{ background: C.bgPanel, border: `1px solid ${C.border}`, color: C.text }}
-              onFocus={(e) => e.target.style.borderColor = C.amber}
-              onBlur={(e) => e.target.style.borderColor = C.border} />
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: C.inkMuted }} />
+            <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search prompts by name, tag, or use case"
+              className="w-full pl-11 pr-4 py-3 font-sans text-sm transition-colors outline-none"
+              style={{ background: C.bgPanel, border: `1px solid ${C.ink}`, color: C.ink, borderRadius: 0 }}
+              onFocus={(e) => e.target.style.borderColor = C.accent}
+              onBlur={(e) => e.target.style.borderColor = C.ink} />
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <FilterButton active={activeCategory === 'all' && !showFavoritesOnly} onClick={() => { setActiveCategory('all'); setShowFavoritesOnly(false); }}>All · {categoryCounts.all}</FilterButton>
             <button onClick={() => { setShowFavoritesOnly(!showFavoritesOnly); setActiveCategory('all'); }}
-              className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider px-3 py-1.5 transition-colors"
+              className="flex items-center gap-1.5 font-sans text-[11px] uppercase tracking-[0.15em] px-4 py-2 transition-colors"
               style={{
-                background: showFavoritesOnly ? C.amber : 'transparent',
-                color: showFavoritesOnly ? C.bg : C.textDim,
-                border: `1px solid ${showFavoritesOnly ? C.amber : C.border}`,
+                background: showFavoritesOnly ? C.accent : C.bgPanel,
+                color: showFavoritesOnly ? C.bgPanel : C.ink,
+                border: `1px solid ${showFavoritesOnly ? C.accent : C.ink}`,
+                fontWeight: 600,
               }}>
-              <Star size={10} fill={showFavoritesOnly ? 'currentColor' : 'none'} />Favorites · {favorites.size}
+              <Star size={11} fill={showFavoritesOnly ? 'currentColor' : 'none'} />Favorites · {favorites.size}
             </button>
-            <span style={{ color: C.border }} className="mx-1">·</span>
-            {(data.categories || []).map(cat => (
+            <span className="mx-1" style={{ color: C.inkFaint }}>·</span>
+            {(data.categories || []).map((cat, i) => (
               <FilterButton key={cat.id} active={activeCategory === cat.id && !showFavoritesOnly} disabled={categoryCounts[cat.id] === 0} onClick={() => { setActiveCategory(cat.id); setShowFavoritesOnly(false); }}>
-                {cat.label} · {categoryCounts[cat.id] || 0}
+                {String(i + 1).padStart(2, '0')} · {cat.label} · {categoryCounts[cat.id] || 0}
               </FilterButton>
             ))}
           </div>
         </div>
       </section>
-      <main className="max-w-5xl mx-auto px-6 py-8">
+      <main className="max-w-5xl mx-auto px-6 py-10">
         {filtered.length === 0 ? (
-          <div className="text-center py-20" style={{ border: `1px dashed ${C.border}` }}>
-            <Sparkles size={24} className="mx-auto mb-3" style={{ color: C.textMuted }} />
-            <p className="mb-1" style={{ color: C.textDim, fontFamily: 'system-ui, sans-serif' }}>No prompts match your filter.</p>
-            <p className="font-mono text-xs uppercase tracking-wider" style={{ color: C.textMuted }}>Try a different query, category, or turn off favorites</p>
+          <div className="text-center py-24" style={{ border: `1px solid ${C.ink}` }}>
+            <Sparkles size={24} className="mx-auto mb-4" style={{ color: C.inkFaint }} />
+            <p className="font-sans mb-1" style={{ color: C.ink, fontWeight: 600 }}>No prompts match your filter.</p>
+            <p className="font-sans text-xs uppercase tracking-[0.15em]" style={{ color: C.inkMuted }}>Try a different query, category, or turn off favorites</p>
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 gap-4">
-            {filtered.map(prompt => <PromptCard key={prompt.id} prompt={prompt} onOpen={onOpenPrompt} isFavorite={favorites.has(prompt.id)} onToggleFavorite={onToggleFavorite} />)}
+          <div className="grid sm:grid-cols-2 gap-5">
+            {filtered.map(prompt => {
+              const cat = categoryLookup[prompt.category] || { number: '--', label: 'Misc' };
+              return <PromptCard key={prompt.id} prompt={prompt} onOpen={onOpenPrompt} isFavorite={favorites.has(prompt.id)} onToggleFavorite={onToggleFavorite} categoryNumber={cat.number} categoryLabel={cat.label} />;
+            })}
           </div>
         )}
       </main>
@@ -320,15 +334,15 @@ function ResourcesTab({ data }) {
 
   return (
     <>
-      <section className="sticky z-10" style={{ top: '129px', background: C.bg, borderBottom: `1px solid ${C.border}` }}>
-        <div className="max-w-5xl mx-auto px-6 py-4 space-y-3">
+      <section className="sticky z-10" style={{ top: '112px', background: C.bg, borderBottom: `1px solid ${C.ink}` }}>
+        <div className="max-w-5xl mx-auto px-6 py-5 space-y-4">
           <div className="relative">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: C.textMuted }} />
-            <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="// Search resources by name or description..."
-              className="w-full pl-10 pr-4 py-2.5 font-mono text-sm transition-colors outline-none"
-              style={{ background: C.bgPanel, border: `1px solid ${C.border}`, color: C.text }}
-              onFocus={(e) => e.target.style.borderColor = C.amber}
-              onBlur={(e) => e.target.style.borderColor = C.border} />
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: C.inkMuted }} />
+            <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search resources by name or description"
+              className="w-full pl-11 pr-4 py-3 font-sans text-sm transition-colors outline-none"
+              style={{ background: C.bgPanel, border: `1px solid ${C.ink}`, color: C.ink, borderRadius: 0 }}
+              onFocus={(e) => e.target.style.borderColor = C.accent}
+              onBlur={(e) => e.target.style.borderColor = C.ink} />
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <FilterButton active={activeType === 'all'} onClick={() => setActiveType('all')}>All · {typeCounts.all}</FilterButton>
@@ -340,15 +354,15 @@ function ResourcesTab({ data }) {
           </div>
         </div>
       </section>
-      <main className="max-w-5xl mx-auto px-6 py-8">
+      <main className="max-w-5xl mx-auto px-6 py-10">
         {filtered.length === 0 ? (
-          <div className="text-center py-20" style={{ border: `1px dashed ${C.border}` }}>
-            <Sparkles size={24} className="mx-auto mb-3" style={{ color: C.textMuted }} />
-            <p style={{ color: C.textDim, fontFamily: 'system-ui, sans-serif' }}>No resources match your filter.</p>
+          <div className="text-center py-24" style={{ border: `1px solid ${C.ink}` }}>
+            <Sparkles size={24} className="mx-auto mb-4" style={{ color: C.inkFaint }} />
+            <p className="font-sans" style={{ color: C.ink, fontWeight: 600 }}>No resources match your filter.</p>
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 gap-4">
-            {filtered.map(resource => <ResourceCard key={resource.id} resource={resource} />)}
+          <div className="grid sm:grid-cols-2 gap-5">
+            {filtered.map((resource, i) => <ResourceCard key={resource.id} resource={resource} index={i} />)}
           </div>
         )}
       </main>
@@ -358,8 +372,8 @@ function ResourcesTab({ data }) {
 
 function ErrorBanner({ message }) {
   return (
-    <div className="px-6 py-3" style={{ background: `${C.red}22`, borderBottom: `1px solid ${C.red}` }}>
-      <div className="max-w-5xl mx-auto flex items-center gap-2 text-sm font-mono" style={{ color: C.red }}>
+    <div className="px-6 py-3" style={{ background: C.accentLight, borderBottom: `1px solid ${C.accent}` }}>
+      <div className="max-w-5xl mx-auto flex items-center gap-2 text-sm font-mono" style={{ color: C.accent }}>
         <AlertCircle size={16} />
         <span>{message}</span>
       </div>
@@ -400,36 +414,45 @@ export default function App() {
     return next;
   });
 
+  const categoryLookup = useMemo(() => {
+    const m = {};
+    (promptsData.categories || []).forEach((c, i) => { m[c.id] = { number: String(i + 1).padStart(2, '0'), label: c.label }; });
+    return m;
+  }, [promptsData.categories]);
+
+  const openPromptCat = openPrompt ? (categoryLookup[openPrompt.category] || { number: '--', label: 'Misc' }) : null;
+
   return (
-    <div className="min-h-screen" style={{ background: C.bg, color: C.text, fontFamily: 'system-ui, sans-serif' }}>
+    <div className="min-h-screen" style={{ background: C.bg, color: C.ink, fontFamily: 'Inter, system-ui, sans-serif' }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
-        .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
-        body { background: ${C.bg}; }
-        ::selection { background: ${C.amber}; color: ${C.bg}; }
-        input::placeholder, textarea::placeholder { color: ${C.textMuted}; }
-        select option { background: ${C.bgPanel}; color: ${C.text}; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        .font-sans { font-family: 'Inter', system-ui, sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-feature-settings: "calt" 1; }
+        body { background: ${C.bg}; -webkit-font-smoothing: antialiased; }
+        ::selection { background: ${C.accent}; color: ${C.bgPanel}; }
+        input::placeholder, textarea::placeholder { color: ${C.inkFaint}; }
+        select { appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' stroke='%230A0A0A' stroke-width='1.5' fill='none'/></svg>"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px !important; }
       `}</style>
 
-      <header className="sticky top-0 z-20" style={{ background: C.bg, borderBottom: `1px solid ${C.border}` }}>
-        <div className="max-w-5xl mx-auto px-6 pt-6 pb-0">
-          <div className="flex items-baseline justify-between flex-wrap gap-2 mb-4">
+      <header className="sticky top-0 z-20" style={{ background: C.bg, borderBottom: `2px solid ${C.ink}` }}>
+        <div className="max-w-5xl mx-auto px-6 pt-8 pb-0">
+          <div className="flex items-end justify-between flex-wrap gap-2 mb-6">
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] mb-1" style={{ color: C.amber }}>&gt; personal reference</p>
-              <h1 className="font-mono text-3xl sm:text-4xl leading-none tracking-tight" style={{ color: C.text, fontWeight: 600 }}>prompt_library</h1>
+              <p className="font-sans text-[10px] uppercase tracking-[0.25em] mb-2" style={{ color: C.accent, fontWeight: 700 }}>Personal Reference</p>
+              <h1 className="font-sans leading-[0.95]" style={{ color: C.ink, fontSize: '3rem', fontWeight: 800, letterSpacing: '-0.035em' }}>Prompt Library</h1>
             </div>
-            <div className="flex items-baseline gap-4 font-mono text-[10px] uppercase tracking-widest" style={{ color: C.textMuted }}>
-              <span>vol.01</span><span style={{ color: C.border }}>·</span><span>{new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toLowerCase()}</span>
+            <div className="flex items-baseline gap-3 font-mono text-[10px] uppercase tracking-[0.15em]" style={{ color: C.inkMuted }}>
+              <span>Vol. 01</span><span style={{ color: C.inkFaint }}>/</span><span>{new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
             </div>
           </div>
-          <div className="flex items-end gap-0 -mb-px">
-            <button onClick={() => setTab('prompts')} className="flex items-center gap-2 px-4 py-3 font-mono text-xs uppercase tracking-wider transition-colors"
-              style={{ borderBottom: `2px solid ${tab === 'prompts' ? C.amber : 'transparent'}`, color: tab === 'prompts' ? C.amber : C.textMuted }}>
-              <BookOpen size={14} />prompts<span className="ml-1" style={{ color: C.textMuted }}>· {(promptsData.prompts || []).length}</span>
+          <div className="flex items-end gap-0">
+            <button onClick={() => setTab('prompts')} className="flex items-center gap-2 px-5 py-3 font-sans text-xs uppercase tracking-[0.15em] transition-all"
+              style={{ background: tab === 'prompts' ? C.ink : 'transparent', color: tab === 'prompts' ? C.bgPanel : C.ink, fontWeight: 600 }}>
+              <BookOpen size={14} />Prompts<span className="ml-1 font-mono" style={{ opacity: 0.6 }}>·{(promptsData.prompts || []).length}</span>
             </button>
-            <button onClick={() => setTab('resources')} className="flex items-center gap-2 px-4 py-3 font-mono text-xs uppercase tracking-wider transition-colors"
-              style={{ borderBottom: `2px solid ${tab === 'resources' ? C.amber : 'transparent'}`, color: tab === 'resources' ? C.amber : C.textMuted }}>
-              <Library size={14} />resources<span className="ml-1" style={{ color: C.textMuted }}>· {(resourcesData.resources || []).length}</span>
+            <button onClick={() => setTab('resources')} className="flex items-center gap-2 px-5 py-3 font-sans text-xs uppercase tracking-[0.15em] transition-all"
+              style={{ background: tab === 'resources' ? C.ink : 'transparent', color: tab === 'resources' ? C.bgPanel : C.ink, fontWeight: 600 }}>
+              <Library size={14} />Resources<span className="ml-1 font-mono" style={{ opacity: 0.6 }}>·{(resourcesData.resources || []).length}</span>
             </button>
           </div>
         </div>
@@ -439,7 +462,7 @@ export default function App() {
 
       {loading ? (
         <div className="max-w-5xl mx-auto px-6 py-20 text-center">
-          <p className="font-mono text-xs uppercase tracking-widest" style={{ color: C.textMuted }}>// Loading...</p>
+          <p className="font-sans text-xs uppercase tracking-[0.2em]" style={{ color: C.inkMuted, fontWeight: 600 }}>Loading…</p>
         </div>
       ) : tab === 'prompts' ? (
         <PromptsTab data={promptsData} favorites={favorites} onToggleFavorite={toggleFavorite} onOpenPrompt={setOpenPrompt} />
@@ -447,16 +470,16 @@ export default function App() {
         <ResourcesTab data={resourcesData} />
       )}
 
-      <footer className="mt-16" style={{ borderTop: `1px solid ${C.border}` }}>
+      <footer className="mt-20" style={{ borderTop: `1px solid ${C.ink}` }}>
         <div className="max-w-5xl mx-auto px-6 py-6 flex items-center justify-between flex-wrap gap-2">
-          <p className="font-mono text-[10px] uppercase tracking-widest" style={{ color: C.textMuted }}>
-            // {tab === 'prompts' ? 'Edit prompts.json on GitHub to add entries' : 'Edit resources.json on GitHub to add entries'}
+          <p className="font-sans text-[10px] uppercase tracking-[0.2em]" style={{ color: C.inkMuted, fontWeight: 600 }}>
+            {tab === 'prompts' ? 'Edit prompts.json on GitHub to add entries' : 'Edit resources.json on GitHub to add entries'}
           </p>
-          <p className="font-mono text-[10px] uppercase tracking-widest" style={{ color: C.textMuted }}>// Favorites saved in your browser</p>
+          <p className="font-sans text-[10px] uppercase tracking-[0.2em]" style={{ color: C.inkFaint, fontWeight: 600 }}>Favorites saved in your browser</p>
         </div>
       </footer>
 
-      {openPrompt && <PromptDetail prompt={openPrompt} onClose={() => setOpenPrompt(null)} isFavorite={favorites.has(openPrompt.id)} onToggleFavorite={toggleFavorite} />}
+      {openPrompt && <PromptDetail prompt={openPrompt} onClose={() => setOpenPrompt(null)} isFavorite={favorites.has(openPrompt.id)} onToggleFavorite={toggleFavorite} categoryNumber={openPromptCat.number} categoryLabel={openPromptCat.label} />}
     </div>
   );
 }
